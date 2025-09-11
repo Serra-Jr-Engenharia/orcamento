@@ -1,4 +1,7 @@
 @import "tailwindcss";
 
-@import "tailwindcss/preflight"
+/* @import "tailwindcss/preflight"; */
 
+/* body { 
+    margin: 0; 
+} */
