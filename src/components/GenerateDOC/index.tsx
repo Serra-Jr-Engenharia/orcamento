@@ -125,18 +125,24 @@ const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, tabs, pri
   return (
     <div>
       <div>
-        <label htmlFor="pdfTitle" className="text-lg font-medium mb-4">Título do PDF:</label>
-        <input 
-        type="text" 
-        id="pdfTitle" 
-        value={pdfTitle} 
-        onChange={(e) => setPdfTitle(e.target.value)} 
-        placeholder="Digite o título do documento"
-        className="w-full p-2 border border-gray-300 rounded-lg mb-4"/>
+        <label
+          htmlFor="pdfTitle"
+          className="block text-sm sm:text-lg font-medium mb-2 sm:mb-4"
+        >
+          Título do PDF:
+        </label>
+        <input
+          type="text"
+          id="pdfTitle"
+          value={pdfTitle}
+          onChange={(e) => setPdfTitle(e.target.value)}
+          placeholder="Digite o título do documento"
+          className="w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+        />
       </div>
-      <div className="w-full flex justify-between">
+      <div className="w-full flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-between">
         <button
-          className="bg-[#12164D] hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-md"
+          className="w-full sm:w-auto bg-[#12164D] hover:bg-blue-700 text-white font-semibold py-3 px-6 sm:px-8 text-sm sm:text-base rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
           onClick={generatePDF}
         >
           Gerar PDF
