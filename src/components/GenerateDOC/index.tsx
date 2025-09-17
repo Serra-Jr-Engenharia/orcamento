@@ -5,12 +5,12 @@ import type { Tab } from "../Card/index.tsx";
 
 interface GenerateDOCProps {
   selections: Record<string, any>;
-  total: number;
+  totals: number;
   tabs: Tab[]
   priceTable: Record<string, Record<string, number>>;
 }
 
-const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, total, tabs, priceTable }) => {
+const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, tabs, priceTable }) => {
   const [pdfTitle, setPdfTitle] = useState("");
 
   const generatePDF = () => {
@@ -70,7 +70,7 @@ const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, total, tabs, pric
     
     doc.setFont("Poppins", "bold");
     doc.text("Total", marginLeft, currentY);
-    doc.text(`R$${total}`, 150, currentY);
+    doc.text(`R$${totals}`, 150, currentY);
     currentY += rowHeight;
 
     doc.setDrawColor(0, 0, 0);
@@ -112,7 +112,7 @@ const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, total, tabs, pric
       });      
     });
 
-    data.push(["Total", "", "", `R$${total}`]); 
+    data.push(["Total", "", "", `R$${totals}`]); 
 
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -142,7 +142,7 @@ const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, total, tabs, pric
           Gerar PDF
         </button>
         <button
-          className="bg-[#12164D] hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-md"
+          className="w-full sm:w-auto bg-[#12164D] hover:bg-blue-700 text-white font-semibold py-3 px-6 sm:px-8 text-sm sm:text-base rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
           onClick={generateXLSX}
         >
           Gerar XLSX

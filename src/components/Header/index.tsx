@@ -23,8 +23,8 @@ export default function Header ({ title }: HeaderProps) {
             </div>
 
             <div className="flex items-center justify-center flex-col">
-                <h1 className="text-white text-8xl font-bold mb-6">{title}</h1>
-                <img src={img} alt="barra do titulo"></img>
+                <h1 className="text-white text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-3 sm:mb-4 md:mb-6 text-center">{title}</h1>
+                <img src={img} alt="barra do titulo" ></img>
             </div> 
                  
         </header>

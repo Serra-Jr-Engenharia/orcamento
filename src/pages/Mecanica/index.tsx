@@ -8,15 +8,18 @@ interface Selections {
 }
 
 const Mecanica: React.FC = () => { 
-  const [total, setTotal] = useState(0);
+  const [totals, setTotals] = useState<Record<string, number>>({
+    "Mão de Obra": 0,
+    "Prototipagem": 0,
+  });
   const [selections, setSelections] = useState<Selections>({});
 
   const tabs: Tab[] = [
     {
       name: "Mão de Obra",
       fields: [
-        { label: "Desenho Técnico", type: "multiselect", options: ["Vistas ortogonais básicas de uma peça simples", "Desenho com cortes e cotas para fabricação", "Conjuntos com detalhes de montagem", "Projetos com normas técnicas, materiais e tolerâncias específicas"], key: "desenhoTecnico" },
-        { label: "Modelagem 3D", type: "multiselect", options: ["Peças geométricas simples, sem encaixes", "Componentes com furos, encaixes e pequenas tolerâncias", "Conjuntos com movimentação ou múltiplas peças interligadas", "Modelagem complexa com montagem e simulação de funcionamento"], key: "modelagem3d" },
+        { label: "Desenho Técnico", type: "multiselect", options: ["Vistas ortogonais básicas de uma peça simples", "Desenho com cortes e cotas para fabricação", "Conjuntos com detalhes de montagem", "Projetos com normas técnicas, materiais e tolerâncias específicas"], key: "desenhoTecnico"},
+        { label: "Modelagem 3D", type: "multiselect", options: ["Peças geométricas simples, sem encaixes", "Componentes com furos, encaixes e pequenas tolerâncias", "Conjuntos com movimentação ou múltiplas peças interligadas", "Modelagem complexa com montagem e simulação de funcionamento"], key: "modelagem3d"},
         { label: "Automação", type: "multiselect", options: ["Ajustes simples de sensores ou atuadores já existentes", "Programação básica com arduíno", "Integração de sensores e motores com controle lógico"], key: "automacao" },
         { label: "Reparos e Manutenções", type: "multiselect", options: ["Inspeção e reaperto de componentes", "Troca de peças simples", "Substituição e alinhamento de componentes mecânicos", "Reparo com desmontagem parcial e diagnóstico"], key: "reparos" },
         { label: "Análises Estruturais", type: "multiselect", options: ["Verificação manual simples", "Cálculo de esforços em vigas ou suportes", "Simulação em software com cargas estáticas", "Análise FEM com múltiplos cenários e otimização"], key: "analiseEstrutural" },
@@ -89,52 +92,58 @@ const Mecanica: React.FC = () => {
     },
   };
 
-  const calcTotal = (newSelections: Selections) => {
-    let newTotal = 0;
+  const calcTotals = (newSelection: Selections) => {
+    const newTotals: Record<string, number> = {};
 
-    for (const [key, value] of Object.entries(newSelections)) {
-      if (priceTable[key]) {
-        if (Array.isArray(value)) {
-          value.forEach(item => {
-            if (priceTable[key][item]) {
-              newTotal += priceTable[key][item];
+    tabs.forEach(tab => {
+      let tabTotal = 0;
+      const tabKeys = tab.fields.map(field => field.key);
+
+      for (const [key, value] of Object.entries(newSelection)) {
+        if (tabKeys.includes(key) && priceTable[key]) {
+          if (Array.isArray(value)) {
+            value.forEach(v => {
+              if (priceTable[key][v]) {
+                tabTotal += priceTable[key][v];
+              }
+            });
+          } else {
+            if (priceTable[key][value]) {
+              tabTotal += priceTable[key][value];
             }
-          });
-        }
-        else if (priceTable[key][value]) {
-          newTotal += priceTable[key][value];
+          }
         }
       }
-    }
-    setTotal(newTotal);
+
+      newTotals[tab.name] = tabTotal;
+    });
+
+    setTotals(newTotals);
   };
 
-  const handleChange = (key: string, value: string, type: string) => {
-    const newSelections = { ...selections };
-
-    if (type === 'checkbox') {
-        const currentSelection = (newSelections[key] as string[]) || [];
-        const isSelected = currentSelection.includes(value);
-
-        if (isSelected) {
-            newSelections[key] = currentSelection.filter(item => item !== value);
-        } else {
-            newSelections[key] = [...currentSelection, value];
-        }
-    } else {
-        newSelections[key] = value;
-    }
-
-    setSelections(newSelections);
-    calcTotal(newSelections);
+  const handleChange = (key: string, value: string | string[]) => {
+  const newSelections = {
+    ...selections,
+    [key]: value,
   };
+
+  setSelections(newSelections);
+  calcTotals(newSelections);
+};
 
   return (
     <div className="w-full min-h-screen flex items-center flex-col bg-gray-100">
-      <Header title="Mecânica"></Header>
-      <Card tabs={tabs} selections={selections} handleChange={handleChange} total={total} />
+      <Header title="Mecânica" />
+
+      <Card
+        tabs={tabs}
+        selections={selections}
+        handleChange={handleChange}
+        totals={totals}
+        priceTable={priceTable}
+      />
     </div>
   );
-}
+};
 
 export default Mecanica;
