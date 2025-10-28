@@ -5,18 +5,26 @@ import type { Tab } from "../Card/index.tsx";
 
 interface GenerateDOCProps {
   selections: Record<string, any>;
-  totals: number;
+  totals: number; 
   tabs: Tab[]
   priceTable: Record<string, Record<string, number>>;
+  activeTabName: string; 
 }
 
-const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, tabs, priceTable }) => {
+const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, tabs, priceTable, activeTabName }) => {
   const [pdfTitle, setPdfTitle] = useState("");
 
   const generatePDF = () => {
+    const activeTab = tabs.find((tab) => tab.name === activeTabName);
+
+    if (!activeTab) {
+      alert("Erro: Aba ativa não encontrada.");
+      return;
+    }
+
     const doc = new jsPDF();
   
-    doc.setFont("Poppins", "normal");
+    doc.setFont("helvetica", "normal"); 
     doc.setFontSize(12);
 
     doc.setTextColor(0, 102, 204); 
@@ -31,93 +39,141 @@ const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, tabs, pri
 
     const marginLeft = 14;
     let currentY = 30;
-    const rowHeight = 10;
+    const rowHeight = 8; 
 
     doc.setFontSize(12);
-    doc.setFont("Poppins", "bold");
+    doc.setFont("helvetica", "bold"); 
     doc.text("Campo", marginLeft, currentY);
     doc.text("Valor", 80, currentY);
     doc.text("Preço", 150, currentY);
 
     doc.setFontSize(12);
-    doc.setFont("Poppins", "normal");
-    currentY += rowHeight;
+    doc.setFont("helvetica", "normal"); 
+    currentY += rowHeight; 
 
-    tabs.forEach((tab) => {
-      tab.fields.forEach((field) => {
-        const value = selections[field.key];
-        if (value === null || value === undefined || (typeof value === 'boolean' && !value)) {
-            return; 
-        }
+    let hasSelectedItems = false; 
 
-        let formattedValue;
-        if (typeof value === 'boolean') {
-          formattedValue = value ? "Sim" : "Não";
+    activeTab.fields.forEach((field) => {
+        const value = selections[field.key]; 
+
+        if (value === null || value === undefined) return;
+        if (typeof value === 'boolean' && !value) return;
+        if (Array.isArray(value) && value.length === 0) return;
+        if (typeof value === 'string' && value.trim() === '') return;
+
+        hasSelectedItems = true; 
+
+        if (Array.isArray(value)) {
+          value.forEach((arrayItem) => {
+            const formattedValue = arrayItem.toString();
+            const itemPrice = priceTable[field.key]?.[formattedValue];
+            const priceText = (itemPrice !== null && itemPrice !== undefined) ? `R$${itemPrice.toFixed(2).replace('.', ',')}` : "Não Disponível";
+
+            const fieldLabelSplit = doc.splitTextToSize(field.label, 60); 
+            const formattedValueSplit = doc.splitTextToSize(formattedValue, 65); 
+            const maxLines = Math.max(fieldLabelSplit.length, formattedValueSplit.length, 1);
+            doc.text(fieldLabelSplit, marginLeft, currentY);
+            doc.text(formattedValueSplit, 80, currentY);
+            doc.text(priceText, 150, currentY);
+            currentY += rowHeight * maxLines; 
+          });
+
         } else {
-          formattedValue = value.toString();
+          let formattedValue: string;
+          let priceLookupKey: string; 
+
+          if (typeof value === 'boolean') {
+            formattedValue = field.label; 
+            priceLookupKey = 'true';
+          } else {
+            formattedValue = value.toString();
+            priceLookupKey = formattedValue;
+          }
+
+          const itemPrice = priceTable[field.key]?.[priceLookupKey];
+          const priceText = (itemPrice !== null && itemPrice !== undefined) ? `R$${itemPrice.toFixed(2).replace('.', ',')}` : "Não Disponível";
+
+          const fieldLabelSplit = doc.splitTextToSize(field.label, 60);
+          const formattedValueSplit = doc.splitTextToSize(formattedValue, 65);
+          const maxLines = Math.max(fieldLabelSplit.length, formattedValueSplit.length, 1);
+          doc.text(fieldLabelSplit, marginLeft, currentY);
+          doc.text(formattedValueSplit, 80, currentY);
+          doc.text(priceText, 150, currentY);
+          currentY += rowHeight * maxLines;
         }
-
-        const itemPrice = priceTable[field.key]?.[value]; 
-        const priceText = itemPrice ? `R$${itemPrice}` : "Não Disponível";
-
-        doc.text(field.label, marginLeft, currentY);
-        doc.text(formattedValue, 80, currentY);
-        doc.text(priceText, 150, currentY);
-
-        currentY += rowHeight;
       });
-    });
     
-    doc.setFont("Poppins", "bold");
-    doc.text("Total", marginLeft, currentY);
-    doc.text(`R$${totals}`, 150, currentY);
-    currentY += rowHeight;
+    if (hasSelectedItems) {
+        doc.setFont("helvetica", "bold"); 
+        currentY += rowHeight / 2; 
+        doc.line(14, currentY, 196, currentY); 
+        currentY += rowHeight;
+        doc.text("Total", marginLeft, currentY);
+        doc.text(`R$${totals.toFixed(2).replace('.', ',')}`, 150, currentY);
+        currentY += rowHeight;
+    } 
 
     doc.setDrawColor(0, 0, 0);
-    doc.line(14, currentY, 196, currentY);
-
+    doc.line(14, currentY, 196, currentY); 
     const fileName = pdfTitle.trim() ? `${pdfTitle}.pdf` : "ResumoPedido.pdf";
     doc.save(fileName);
   };
 
   const generateXLSX = () => {
+    const activeTab = tabs.find((tab) => tab.name === activeTabName);
+
+    if (!activeTab) {
+      console.error("Aba ativa não encontrada para XLSX.");
+      return;
+    }
+
     const data = [
       ["Campo", "Tipo", "Valor", "Preço"]
     ];
+    let hasSelectedItems = false;
 
-    tabs.forEach((tab) => {
-      tab.fields.forEach((field) => {
+    activeTab.fields.forEach((field) => {
         const value = selections[field.key];
-
-        if (value === null || value === undefined || (typeof value === 'boolean' && !value)) {
-            return; 
-        }
-
-        let formattedValue;
-        if (typeof value === 'boolean') {
-          formattedValue = value ? "Sim" : "Não";
-        } else {
-          formattedValue = value.toString();
-        }
         
-        const itemPrice = priceTable[field.key]?.[value];
-        const priceText = itemPrice ? `R$${itemPrice}` : "Não Disponível";
+        if (value === null || value === undefined) return;
+        if (typeof value === 'boolean' && !value) return;
+        if (Array.isArray(value) && value.length === 0) return;
+        if (typeof value === 'string' && value.trim() === '') return;
 
-        data.push([
-            field.label,      
-            field.type,       
-            formattedValue,   
-            priceText         
-        ]);
-      });      
-    });
+        hasSelectedItems = true;
 
-    data.push(["Total", "", "", `R$${totals}`]); 
+        if (Array.isArray(value)) {
+          value.forEach((arrayItem) => {
+            const formattedValue = arrayItem.toString();
+            const itemPrice = priceTable[field.key]?.[formattedValue];
+            const priceText = (itemPrice !== null && itemPrice !== undefined) ? `R$${itemPrice.toFixed(2).replace('.', ',')}` : "Não Disponível";
+            data.push([field.label, field.type, formattedValue, priceText]);
+          });
+        } else {
+          let formattedValue: string;
+          let priceLookupKey: string; 
+
+          if (typeof value === 'boolean') {
+            formattedValue = field.label; 
+            priceLookupKey = 'true';
+          } else {
+            formattedValue = value.toString();
+            priceLookupKey = formattedValue;
+          }
+
+          const itemPrice = priceTable[field.key]?.[priceLookupKey];
+          const priceText = (itemPrice !== null && itemPrice !== undefined) ? `R$${itemPrice.toFixed(2).replace('.', ',')}` : "Não Disponível";
+          data.push([field.label, field.type, formattedValue, priceText]);
+        }
+      });      
+
+    if (hasSelectedItems || totals > 0) {
+      data.push(["Total", "", "", `R$${totals.toFixed(2).replace('.', ',')}`]); 
+    }
 
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Resumo");
-
     const fileName = pdfTitle.trim() ? `${pdfTitle}.xlsx` : "ResumoPedido.xlsx";
     XLSX.writeFile(workbook, fileName);
   };

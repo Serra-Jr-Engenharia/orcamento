@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import GenerateDOC from "../GenerateDOC";
-// import jsPDF from "jspdf";
 
 export interface CardField {
     label: string;
@@ -12,13 +11,13 @@ export interface CardField {
 }
 
 export interface Tab {
-    name: string;
+    name: string; 
     fields: CardField[];
 }
 
 interface CardProps {
     tabs: Tab[];
-    selections:  Record<string, any>;
+    selections: Record<string, any>;
     handleChange: (key: string, value: any) => void;
     totals: Record<string, number>;
     priceTable: Record<string, Record<string, number>>;
@@ -127,7 +126,6 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
 
     return(
     <div className="bg-white w-3/4 rounded-2xl shadow-md -mt-16 mb-20 flex flex-col items-center relative z-20">
-            {/*Abas*/}
             <div className="flex w-full">
                 {tabs.map((tab) => (
                     <button 
@@ -146,7 +144,6 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
                     ))}               
             </div>
                 
-            {/*Campos*/}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-12">
                     {activeFields.map((field) => (
                         <div key={field.key} className="flex flex-col">
@@ -166,9 +163,8 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
                     R${totalForCurrentTab.toFixed(0)}
                 </p>
             </div>
-            {/*Botão de gerar PDF*/}
             <div className="flex justify-center gap-4">
-                < GenerateDOC selections={selections} totals={totals[activeTab]} tabs={tabs} priceTable={priceTable}/>
+                < GenerateDOC selections={selections} totals={totalForCurrentTab} tabs={tabs} priceTable={priceTable} activeTabName={activeTab}/>
             </div>
         </div>    
     </div>
