@@ -5,6 +5,7 @@ export interface CardField {
     label: string;
     type: "select" | "radio" | "multiselect";
     options?: string[];
+    descriptions?: Record<string, string>;
     key: string
     placeholder?: string;
     className?: string;
@@ -147,8 +148,21 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-12">
                     {activeFields.map((field) => (
                         <div key={field.key} className="flex flex-col">
-                            <label className={`text-lg font-medium text-gray-700 mb-2 ${field.className || ''}`}>
+                            <label className={`text-lg font-medium text-gray-700 mb-2 flex items-center gap-2 ${field.className || ''}`}>
                                 {field.label}
+                                {field.descriptions && (
+                                    <div className="relative group flex items-center justify-center w-5 h-5 bg-blue-100 text-blue-600 rounded-full cursor-help text-xs font-bold">
+                                        ?
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-pre-wrap">
+                                            {Object.entries(field.descriptions).map(([opt, desc]) => (
+                                                <div key={opt} className="mb-2 last:mb-0">
+                                                    <span className="font-bold text-blue-300">{opt}:</span> {desc}
+                                                </div>
+                                            ))}
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-800"></div>
+                                        </div>
+                                    </div>
+                                )}
                             </label>
                             {renderField(field)}
                         </div>
