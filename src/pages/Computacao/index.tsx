@@ -134,7 +134,12 @@ const Computacao: React.FC = () => {
         },
 
         
-        {label: "Manutenção (Mensal)", type: "select", options: numOpts12, key: "manutencaoMensal"},
+        {
+          label: "Tempo de Execução do Projeto (meses)", type: "select", options: numOpts12, key: "tempoExecucaoMensal",
+          descriptions: {
+            "Custo Operacional": "Garante a manutenção dos servidores de teste e o gerenciamento do projeto durante os meses em que ele está sendo construído."
+          }
+        },
         {label: "Membros Alocados no Projeto", type: "select", options: numOpts10, key: "membrosAlocados"},
       ],
     }
@@ -163,7 +168,7 @@ const Computacao: React.FC = () => {
     pagFrontendAvancado: 900,
     designUIUX: 150,
     idiomasAdicionais: 600,
-    manutencaoMensal: 600,
+    tempoExecucaoMensal: 250,
     membrosAlocados: 400,
   };
 
