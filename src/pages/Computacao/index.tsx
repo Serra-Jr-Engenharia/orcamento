@@ -15,7 +15,7 @@ const Computacao: React.FC = () => {
   });
 
   const numOpts20 = Array.from({length: 21}, (_, i) => String(i));
-  const numOpts12 = Array.from({length: 13}, (_, i) => String(i));
+  const numOpts24 = Array.from({length: 25}, (_, i) => String(i));
   const numOpts10 = Array.from({length: 11}, (_, i) => String(i));
   const numOpts5 = Array.from({length: 6}, (_, i) => String(i));
 
@@ -135,7 +135,7 @@ const Computacao: React.FC = () => {
 
         
         {
-          label: "Tempo de Execução do Projeto (meses)", type: "select", options: numOpts12, key: "tempoExecucaoMensal",
+          label: "Tempo de Execução do Projeto (meses)", type: "select", options: numOpts24, key: "tempoExecucaoMensal",
           descriptions: {
             "Custo Operacional": "Garante a manutenção dos servidores de teste e o gerenciamento do projeto durante os meses em que ele está sendo construído."
           }
@@ -160,7 +160,7 @@ const Computacao: React.FC = () => {
   };
 
   const numericMultipliers: Record<string, number> = {};
-  for (let i = 0; i <= 20; i++) numericMultipliers[String(i)] = i;
+  for (let i = 0; i <= 24; i++) numericMultipliers[String(i)] = i;
 
   const numericBasePrices: Record<string, number> = {
     pagFrontendBasico: 120,
