@@ -169,7 +169,7 @@ const Computacao: React.FC = () => {
     designUIUX: 150,
     idiomasAdicionais: 600,
     tempoExecucaoMensal: 250,
-    membrosAlocados: 400,
+    membrosAlocados: 50,
   };
 
   const generatedPriceTable: Record<string, Record<string, number>> = {};
