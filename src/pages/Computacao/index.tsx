@@ -149,30 +149,30 @@ const Computacao: React.FC = () => {
   ];
 
   const uniquePriceTables: Record<string, Record<string, number>> = {
-    rotasSimples: { "Nenhum": 0, "1 a 3 rotas": 300, "4 a 10 rotas": 800, "Mais de 10 rotas": 1500 },
-    rotasComplexas: { "Nenhum": 0, "Básico": 400, "Intermediário": 2500, "Complexo": 5400 },
-    autenticacao: { "Nenhuma": 0, "Básica (JWT/Firebase)": 300, "Intermediária (OAuth/Google)": 500, "Complexa (Níveis de Acesso ACL/RBAC, 2FA)": 2500 },
-    bancoDados: { "Nenhum": 0, "Básico (1-3 Entidades)": 300, "Intermediário (Relacionamentos Complexos)": 1500, "Avançado (Banco Distribuído, Cache, Triggers)": 4500 },
-    integracaoAPI: { "Nenhuma": 0, "Simples (1 API)": 400, "Intermediária (2-3 APIs)": 800, "Complexa (Múltiplas APIs, Webhooks, Sincronização)": 4000 },
-    dashboardCMS: { "Nenhum": 0, "Simples": 500, "Completo (Gráficos, Gestão Total)": 3500 },
-    integracaoIA: { "Nenhuma": 0, "Uso Simples (Prompt Básico via API)": 600, "Intermediária (Agentes com Memória)": 1200, "Avançada (Prova de Conceito - PoC RAG/Fine-Tuning)": 5000 },
-    chatbot: { "Nenhum": 0, "Fluxo Estático": 500, "Bot com IA Integrada": 1200, "Bot Multicanal (WhatsApp/Insta/Site)": 2000 },
-    automacaoRPA: { "Nenhuma": 0, "Extração Simples de 1 site": 500, "Extração Contínua/Agendada": 1000, "Scraping Complexo c/ Quebra de Captcha e Múltiplas Fontes": 4500 },
-    ecommerce: { "Nenhum": 0, "Catálogo sem pagamento": 1000, "Pagamento (Stripe/MercadoPago) e Carrinho": 4500, "Completo (Frete Correios, Cupons, Estoque, Notas Fiscais)": 12000 },
-    arquiteturaDeploy: { "Nenhum": 0, "Hospedagem Simples (Vercel/Render)": 150, "Configuração Cloud (AWS/GCP/Docker)": 800 },
+    rotasSimples: { "Nenhum": 0, "1 a 3 rotas": 200, "4 a 10 rotas": 500, "Mais de 10 rotas": 900 },
+    rotasComplexas: { "Nenhum": 0, "Básico": 350, "Intermediário": 1000, "Complexo": 2200 },
+    autenticacao: { "Nenhuma": 0, "Básica (JWT/Firebase)": 200, "Intermediária (OAuth/Google)": 400, "Complexa (Níveis de Acesso ACL/RBAC, 2FA)": 900 },
+    bancoDados: { "Nenhum": 0, "Básico (1-3 Entidades)": 250, "Intermediário (Relacionamentos Complexos)": 750, "Avançado (Banco Distribuído, Cache, Triggers)": 1800 },
+    integracaoAPI: { "Nenhuma": 0, "Simples (1 API)": 250, "Intermediária (2-3 APIs)": 600, "Complexa (Múltiplas APIs, Webhooks, Sincronização)": 1600 },
+    dashboardCMS: { "Nenhum": 0, "Simples": 450, "Completo (Gráficos, Gestão Total)": 1400 },
+    integracaoIA: { "Nenhuma": 0, "Uso Simples (Prompt Básico via API)": 400, "Intermediária (Agentes com Memória)": 900, "Avançada (Prova de Conceito - PoC RAG/Fine-Tuning)": 2400 },
+    chatbot: { "Nenhum": 0, "Fluxo Estático": 350, "Bot com IA Integrada": 850, "Bot Multicanal (WhatsApp/Insta/Site)": 1500 },
+    automacaoRPA: { "Nenhuma": 0, "Extração Simples de 1 site": 350, "Extração Contínua/Agendada": 750, "Scraping Complexo c/ Quebra de Captcha e Múltiplas Fontes": 2000 },
+    ecommerce: { "Nenhum": 0, "Catálogo sem pagamento": 700, "Pagamento (Stripe/MercadoPago) e Carrinho": 2200, "Completo (Frete Correios, Cupons, Estoque, Notas Fiscais)": 4800 },
+    arquiteturaDeploy: { "Nenhum": 0, "Hospedagem Simples (Vercel/Render)": 150, "Configuração Cloud (AWS/GCP/Docker)": 500 },
   };
 
   const numericMultipliers: Record<string, number> = {};
   for (let i = 0; i <= 24; i++) numericMultipliers[String(i)] = i;
 
   const numericBasePrices: Record<string, number> = {
-    pagFrontendBasico: 120,
-    pagFrontendIntermediario: 300,
-    pagFrontendAvancado: 900,
-    designUIUX: 150,
-    idiomasAdicionais: 600,
+    pagFrontendBasico: 100,
+    pagFrontendIntermediario: 220,
+    pagFrontendAvancado: 500,
+    designUIUX: 100,
+    idiomasAdicionais: 350,
     tempoExecucaoMensal: 250,
-    membrosAlocados: 50,
+    membrosAlocados: 80,
   };
 
   const generatedPriceTable: Record<string, Record<string, number>> = {};
