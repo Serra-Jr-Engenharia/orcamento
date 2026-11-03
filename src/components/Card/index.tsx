@@ -22,11 +22,17 @@ interface CardProps {
     handleChange: (key: string, value: any) => void;
     totals: Record<string, number>;
     priceTable: Record<string, Record<string, number>>;
+    discount: number;
+    setDiscount: (val: number) => void;
 }
 
-const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, priceTable}) => {
+const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, priceTable, discount, setDiscount}) => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0].name);
-    const totalForCurrentTab = totals[activeTab] || 0;
+    
+    // O valor em 'totals' agora é o valor cheio. Aplicamos o desconto aqui para a UI.
+    const subtotalForCurrentTab = totals[activeTab] || 0;
+    const discountAmount = subtotalForCurrentTab * (discount / 100);
+    const totalWithDiscount = subtotalForCurrentTab - discountAmount;
 
     const renderField = (field: CardField) => {
         switch (field.type) {
@@ -41,7 +47,7 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
                         ))}
                     </select>   
                 );
-            
+
             case "radio":
                 return (
                     <div className="flex items-center gap-6">
@@ -85,7 +91,6 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
                                 key={i}
                                 className="w-full flex items-center p-3 rounded-lg gap-3 cursor-pointer transition-colors hover:border-blue-500 hover:bg-blue-50"
                             >
-                               
                                 <input
                                     type="checkbox"
                                     checked={selections[field.key]?.includes(opt)}
@@ -122,7 +127,7 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
                 return null;
         }
     };
-    
+
     const activeFields = tabs.find((tab) => tab.name === activeTab)?.fields || [];
 
     return(
@@ -142,10 +147,10 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
                     >
                         {tab.name}
                     </button>
-                    ))}               
+                    ))}                
             </div>
-                
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-12">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-12 w-full">
                     {activeFields.map((field) => (
                         <div key={field.key} className="flex flex-col">
                             <label className={`text-lg font-medium text-gray-700 mb-2 flex items-center gap-2 ${field.className || ''}`}>
@@ -168,17 +173,59 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
                         </div>
                     ))}
             </div>
-        <div className="flex items-center w-full justify-between mt-12 mb-8 px-12">
-            {/*Total*/}
-            <div className="flex-1">
-                <p className="font-bold text-[#12164D]" style={{
-                    fontSize: '70px',
-                    }}>
-                    R${totalForCurrentTab.toFixed(0)}
-                </p>
+
+            {/* SEÇÃO DE DESCONTO EJ */}
+            <div className="w-full px-12 pb-6 border-t border-gray-100 pt-6">
+                <div className="flex flex-col md:flex-row items-center justify-between bg-blue-50 rounded-xl p-6 border border-blue-100">
+                    <div className="flex flex-col">
+                        <label className="text-lg font-bold text-blue-900 mb-1">
+                            Apoio Acadêmico / Desconto Empresa Júnior
+                        </label>
+                        <p className="text-sm text-blue-700">Selecione o percentual de desconto concedido a este projeto.</p>
+                    </div>
+                    <select 
+                        className="mt-4 md:mt-0 bg-white rounded-lg h-12 px-6 font-bold text-blue-800 border border-blue-200 shadow-sm"
+                        value={discount}
+                        onChange={(e) => setDiscount(Number(e.target.value))}
+                    >
+                        <option value={0}>Sem Desconto (0%)</option>
+                        <option value={10}>Parceria Básica (10%)</option>
+                        <option value={20}>Padrão EJ (20%)</option>
+                        <option value={30}>Edital/Institucional (30%)</option>
+                        <option value={40}>Custo Operacional (40%)</option>
+                    </select>
+                </div>
             </div>
+
+        <div className="flex items-center w-full justify-between mt-4 mb-8 px-12">
+            {/*Total Display*/}
+            <div className="flex-1 flex flex-col">
+                {discount > 0 && (
+                    <div className="flex items-center gap-3 mb-1">
+                        <span className="text-gray-400 line-through font-medium text-xl">
+                            R${subtotalForCurrentTab.toFixed(0)}
+                        </span>
+                        <span className="bg-green-100 text-green-700 font-bold px-2 py-1 rounded text-sm">
+                            Economia de R${discountAmount.toFixed(0)}
+                        </span>
+                    </div>
+                )}
+                <p className="font-bold text-[#12164D] leading-none" style={{ fontSize: '70px' }}>
+                    R${totalWithDiscount.toFixed(0)}
+                </p>
+                <p className="text-gray-500 font-medium mt-2">Valor final estimado</p>
+            </div>
+            
             <div className="flex justify-center gap-4">
-                < GenerateDOC selections={selections} totals={totalForCurrentTab} tabs={tabs} priceTable={priceTable} activeTabName={activeTab}/>
+                <GenerateDOC 
+                    selections={selections} 
+                    totals={totalWithDiscount} 
+                    subtotal={subtotalForCurrentTab}
+                    discountPercent={discount}
+                    tabs={tabs} 
+                    priceTable={priceTable} 
+                    activeTabName={activeTab}
+                />
             </div>
         </div>    
     </div>
