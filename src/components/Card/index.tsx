@@ -22,11 +22,11 @@ interface CardProps {
     handleChange: (key: string, value: any) => void;
     totals: Record<string, number>;
     priceTable: Record<string, Record<string, number>>;
-    discount: number;
-    setDiscount: (val: number) => void;
+    discount?: number;
+    setDiscount?: (val: number) => void;
 }
 
-const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, priceTable, discount, setDiscount}) => {
+const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, priceTable, discount = 0, setDiscount}) => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0].name);
     
     // O valor em 'totals' agora é o valor cheio. Aplicamos o desconto aqui para a UI.
@@ -175,6 +175,7 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
             </div>
 
             {/* SEÇÃO DE DESCONTO EJ */}
+            {setDiscount && (
             <div className="w-full px-12 pb-6 border-t border-gray-100 pt-6">
                 <div className="flex flex-col md:flex-row items-center justify-between bg-blue-50 rounded-xl p-6 border border-blue-100">
                     <div className="flex flex-col">
@@ -196,6 +197,8 @@ const Card: React.FC<CardProps>= ({tabs, selections, handleChange, totals, price
                     </select>
                 </div>
             </div>
+
+            )}
 
         <div className="flex items-center w-full justify-between mt-4 mb-8 px-12">
             {/*Total Display*/}

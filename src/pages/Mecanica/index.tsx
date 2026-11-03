@@ -13,6 +13,7 @@ const Mecanica: React.FC = () => {
     "Prototipagem": 0,
   });
   const [selections, setSelections] = useState<Selections>({});
+  const [discount, setDiscount] = useState<number>(20);
 
   const tabs: Tab[] = [
     {
@@ -141,6 +142,8 @@ const Mecanica: React.FC = () => {
         handleChange={handleChange}
         totals={totals}
         priceTable={priceTable}
+        discount={discount}
+        setDiscount={setDiscount}
       />
     </div>
   );

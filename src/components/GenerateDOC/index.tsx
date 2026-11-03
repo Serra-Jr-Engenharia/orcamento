@@ -6,12 +6,14 @@ import type { Tab } from "../Card/index.tsx";
 interface GenerateDOCProps {
   selections: Record<string, any>;
   totals: number; 
-  tabs: Tab[]
+  tabs: Tab[];
+  subtotal?: number;
+  discountPercent?: number;
   priceTable: Record<string, Record<string, number>>;
   activeTabName: string; 
 }
 
-const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, tabs, priceTable, activeTabName }) => {
+const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, subtotal, discountPercent = 0, tabs, priceTable, activeTabName }) => {
   const [pdfTitle, setPdfTitle] = useState("");
 
   const generatePDF = () => {
@@ -108,6 +110,17 @@ const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, tabs, pri
         currentY += rowHeight / 2; 
         doc.line(14, currentY, 196, currentY); 
         currentY += rowHeight;
+        if (discountPercent > 0 && subtotal !== undefined) {
+          doc.text("Subtotal", marginLeft, currentY);
+          doc.text(`R$${subtotal.toFixed(2).replace('.', ',')}`, 150, currentY);
+          currentY += rowHeight;
+
+          const discountAmount = subtotal * (discountPercent / 100);
+          doc.text(`Desconto (${discountPercent}%)`, marginLeft, currentY);
+          doc.text(`- R$${discountAmount.toFixed(2).replace('.', ',')}`, 150, currentY);
+          currentY += rowHeight;
+        }
+
         doc.text("Total", marginLeft, currentY);
         doc.text(`R$${totals.toFixed(2).replace('.', ',')}`, 150, currentY);
         currentY += rowHeight;
@@ -168,6 +181,11 @@ const GenerateDOC: React.FC<GenerateDOCProps> = ({ selections, totals, tabs, pri
       });      
 
     if (hasSelectedItems || totals > 0) {
+      if (discountPercent > 0 && subtotal !== undefined) {
+        const discountAmount = subtotal * (discountPercent / 100);
+        data.push(["Subtotal", "", "", `R$${subtotal.toFixed(2).replace('.', ',')}`]);
+        data.push([`Desconto (${discountPercent}%)`, "", "", `- R$${discountAmount.toFixed(2).replace('.', ',')}`]);
+      }
       data.push(["Total", "", "", `R$${totals.toFixed(2).replace('.', ',')}`]); 
     }
 
