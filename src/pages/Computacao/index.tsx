@@ -8,11 +8,14 @@ interface Selections {
 }
 
 const Computacao: React.FC = () => {
-  
+
   const [selections, setSelections] = useState<Selections>({});
   const [totals, setTotals] = useState<Record<string, number>>({
     "Desenvolvimento": 0,
   });
+  
+  // NOVO ESTADO: Desconto padrão da EJ (inicia em 20%)
+  const [discount, setDiscount] = useState<number>(20);
 
   const numOpts20 = Array.from({length: 21}, (_, i) => String(i));
   const numOpts24 = Array.from({length: 25}, (_, i) => String(i));
@@ -222,7 +225,15 @@ const Computacao: React.FC = () => {
   return (
     <div className="w-full min-h-screen flex items-center flex-col bg-gray-100">
       <Header title="Computação"></Header>
-      <Card tabs={tabs} selections={selections} handleChange={handleChange} totals={totals} priceTable={priceTable} />
+      <Card 
+        tabs={tabs} 
+        selections={selections} 
+        handleChange={handleChange} 
+        totals={totals} 
+        priceTable={priceTable}
+        discount={discount}           // Passando o estado
+        setDiscount={setDiscount}     // Passando a função de update
+      />
     </div>
   );
 }
